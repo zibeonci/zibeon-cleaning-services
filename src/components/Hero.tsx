@@ -28,9 +28,9 @@ export const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="flex items-center gap-2 mb-6">
-              <Sparkles className="w-8 h-8 text-accent" />
-              <span className="text-accent font-semibold text-lg">Zibeon Cleaning Services</span>
+            <div className="flex items-center gap-3 mb-6">
+              <Sparkles className="w-10 h-10 text-accent" />
+              <span className="text-accent font-bold text-3xl sm:text-4xl">Zibeon Cleaning Services</span>
             </div>
             
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
