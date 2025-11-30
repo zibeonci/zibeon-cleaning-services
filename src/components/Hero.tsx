@@ -30,7 +30,7 @@ export const Hero = () => {
           >
             <div className="flex items-center gap-2 mb-6">
               <Sparkles className="w-8 h-8 text-accent" />
-              <span className="text-accent font-semibold text-lg">Professional Cleaning Excellence</span>
+              <span className="text-accent font-semibold text-lg">Zibeon Cleaning Services</span>
             </div>
             
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
