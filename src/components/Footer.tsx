@@ -8,7 +8,7 @@ export const Footer = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4">Professional Cleaning</h3>
+            <h3 className="text-2xl font-bold mb-4">Zibeon Cleaning Services</h3>
             <p className="text-primary-foreground/80">
               Delivering excellence in cleaning services across all sectors. Your trusted partner for spotless spaces.
             </p>
@@ -57,7 +57,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/20 pt-8 text-center text-primary-foreground/60">
-          <p>&copy; {currentYear} Professional Cleaning Services. All rights reserved.</p>
+          <p>&copy; {currentYear} Zibeon Cleaning Services. All rights reserved.</p>
           <p className="mt-2 text-sm">
             Fully registered and compliant with UIF, COID, and tax clearance
           </p>
