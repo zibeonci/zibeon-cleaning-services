@@ -44,7 +44,7 @@ export const Footer = () => {
               <li className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4" />
                 <a 
-                  href="https://wa.me/27767149373" 
+                  href="https://wa.me/2767149373" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="hover:text-accent transition-colors"
