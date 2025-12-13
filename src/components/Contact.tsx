@@ -60,7 +60,7 @@ export const Contact = () => {
               <Button 
                 onClick={handleEmailClick}
                 variant="outline"
-                className="w-full border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                className="w-full border-accent bg-accent/20 text-accent hover:bg-accent hover:text-accent-foreground"
               >
                 Email Us
               </Button>

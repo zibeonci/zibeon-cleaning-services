@@ -9,7 +9,7 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-20 pt-20">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -55,7 +55,7 @@ export const Hero = () => {
                 size="lg"
                 variant="outline"
                 onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-lg px-8 py-6 border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                className="text-lg px-8 py-6 border-2 border-accent bg-accent/20 text-accent hover:bg-accent hover:text-accent-foreground"
               >
                 View Services
               </Button>
