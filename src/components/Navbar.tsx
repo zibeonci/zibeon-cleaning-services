@@ -10,7 +10,11 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
-export const Navbar = () => {
+interface NavbarProps {
+  onGetQuote: () => void;
+}
+
+export const Navbar = ({ onGetQuote }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -26,10 +30,6 @@ export const Navbar = () => {
     setIsOpen(false);
     const element = document.querySelector(href);
     element?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleWhatsAppClick = () => {
-    window.open("https://wa.me/2767149373", "_blank");
   };
 
   return (
@@ -71,7 +71,7 @@ export const Navbar = () => {
               </button>
             ))}
             <Button
-              onClick={handleWhatsAppClick}
+              onClick={onGetQuote}
               className="bg-accent hover:bg-accent/90 text-accent-foreground"
             >
               Get Quote
@@ -108,7 +108,10 @@ export const Navbar = () => {
                 </button>
               ))}
               <Button
-                onClick={handleWhatsAppClick}
+                onClick={() => {
+                  setIsOpen(false);
+                  onGetQuote();
+                }}
                 className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
               >
                 Get Quote
