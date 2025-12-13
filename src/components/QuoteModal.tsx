@@ -9,16 +9,14 @@ import { useToast } from "@/hooks/use-toast";
 
 const services = [
   { id: "office", name: "Office Cleaning", price: "From R800/visit" },
-  { id: "residential", name: "Residential / Home Cleaning", price: "From R500/visit" },
-  { id: "airbnb", name: "Airbnb & Short-Term Rental", price: "From R350/turnover" },
+  { id: "residential", name: "Residential / Home Cleaning", price: "From R450/visit" },
+  { id: "airbnb", name: "Airbnb & Short-Term Rental", price: "From R450/turnover" },
   { id: "retail", name: "Shopping Malls & Retail", price: "Custom quote" },
   { id: "schools", name: "Schools & Universities", price: "Custom quote" },
   { id: "medical", name: "Hospitals & Medical", price: "Custom quote" },
   { id: "government", name: "Government Buildings", price: "Custom quote" },
   { id: "construction", name: "Post-Construction Cleaning", price: "From R1500/job" },
   { id: "industrial", name: "Industrial & Warehouse", price: "Custom quote" },
-  { id: "dealership", name: "Car Dealership & Showroom", price: "From R1000/visit" },
-  { id: "restaurant", name: "Restaurant Deep Cleaning", price: "From R1200/visit" },
   { id: "moveinout", name: "Move-In / Move-Out Cleaning", price: "From R800/property" },
 ];
 

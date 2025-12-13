@@ -10,8 +10,6 @@ import {
   Landmark,
   HardHat,
   Factory,
-  Car,
-  UtensilsCrossed,
   ClipboardCheck
 } from "lucide-react";
 
@@ -69,18 +67,6 @@ const services = [
     title: "Industrial Cleaning",
     description: "Warehouse and industrial facility cleaning. Floor sweeping, debris removal, and staff area maintenance.",
     keywords: "Warehouse cleaning, factory maintenance"
-  },
-  {
-    icon: Car,
-    title: "Car Dealerships",
-    description: "Showroom cleaning with focus on shiny floors, spotless windows, and high-visibility areas to showcase vehicles.",
-    keywords: "Dealership cleaning, showroom maintenance"
-  },
-  {
-    icon: UtensilsCrossed,
-    title: "Restaurant Cleaning",
-    description: "Deep cleaning for dining areas, floors, and bathrooms. Maintain food safety standards and pristine guest areas.",
-    keywords: "Food industry cleaning, restaurant hygiene"
   },
   {
     icon: ClipboardCheck,
