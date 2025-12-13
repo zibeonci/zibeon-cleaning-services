@@ -3,11 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import heroImage from "@/assets/hero-cleaning.jpg";
 
-export const Hero = () => {
-  const handleWhatsAppClick = () => {
-    window.open("https://wa.me/27630341790", "_blank");
-  };
+interface HeroProps {
+  onGetQuote: () => void;
+}
 
+export const Hero = ({ onGetQuote }: HeroProps) => {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -46,7 +46,7 @@ export const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg"
-                onClick={handleWhatsAppClick}
+                onClick={onGetQuote}
                 className="text-lg px-8 py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-custom-accent"
               >
                 Get Free Quote
