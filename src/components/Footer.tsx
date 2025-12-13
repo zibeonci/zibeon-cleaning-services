@@ -31,8 +31,8 @@ export const Footer = () => {
             <ul className="space-y-3 text-primary-foreground/80">
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                <a href="tel:0630341790" className="hover:text-accent transition-colors">
-                  063 034 1790
+                <a href="tel:0767149373" className="hover:text-accent transition-colors">
+                  076 714 9373
                 </a>
               </li>
               <li className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export const Footer = () => {
               <li className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4" />
                 <a 
-                  href="https://wa.me/27630341790" 
+                  href="https://wa.me/27767149373" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="hover:text-accent transition-colors"
