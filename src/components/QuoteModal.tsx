@@ -131,28 +131,22 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
       .map((s) => s.name);
 
     try {
-      // Convert images to base64
-      const base64Images = await convertImagesToBase64();
-
-      // Send email via edge function
-      const { data, error } = await supabase.functions.invoke("send-quote-email", {
-        body: {
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          location: formData.location,
-          message: formData.message,
-          services: selectedServiceNames,
-          preferredContact,
-          images: base64Images,
-        },
+      // Save quote to database
+      const { error } = await supabase.from("quotes").insert({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email || null,
+        location: formData.location || null,
+        message: formData.message || null,
+        services: selectedServiceNames,
+        preferred_contact: preferredContact,
       });
 
       if (error) {
         throw error;
       }
 
-      console.log("Quote email sent successfully:", data);
+      console.log("Quote saved to database successfully");
       setStep(3);
     } catch (error: any) {
       console.error("Error sending quote:", error);
