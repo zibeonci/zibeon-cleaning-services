@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import zibeonLogo from "@/assets/zibeon-logo.png";
 
 const navLinks = [
   { name: "Services", href: "#services" },
@@ -49,12 +50,9 @@ export const Navbar = ({ onGetQuote }: NavbarProps) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex items-center gap-2"
+            className="flex items-center"
           >
-            <Sparkles className={`w-8 h-8 ${isScrolled ? "text-accent" : "text-accent"}`} />
-            <span className={`font-bold text-xl ${isScrolled ? "text-foreground" : "text-primary-foreground"}`}>
-              Zibeon
-            </span>
+            <img src={zibeonLogo} alt="Zibeon Cleaning Services" className="h-14 w-auto" />
           </a>
 
           {/* Desktop Navigation */}
