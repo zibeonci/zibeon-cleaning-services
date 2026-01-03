@@ -8,16 +8,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 
 const services = [
-  { id: "office", name: "Office Cleaning", price: "From R800/visit" },
-  { id: "residential", name: "Residential / Home Cleaning", price: "From R450/visit" },
-  { id: "airbnb", name: "Airbnb & Short-Term Rental", price: "From R450/turnover" },
-  { id: "retail", name: "Shopping Malls & Retail", price: "Custom quote" },
-  { id: "schools", name: "Schools & Universities", price: "Custom quote" },
-  { id: "medical", name: "Hospitals & Medical", price: "Custom quote" },
-  { id: "government", name: "Government Buildings", price: "Custom quote" },
-  { id: "construction", name: "Post-Construction Cleaning", price: "From R1500/job" },
-  { id: "industrial", name: "Industrial & Warehouse", price: "Custom quote" },
-  { id: "moveinout", name: "Move-In / Move-Out Cleaning", price: "From R800/property" },
+  { id: "office", name: "Office Cleaning" },
+  { id: "residential", name: "Residential / Home Cleaning" },
+  { id: "airbnb", name: "Airbnb & Short-Term Rental" },
+  { id: "retail", name: "Shopping Malls & Retail" },
+  { id: "schools", name: "Schools & Universities" },
+  { id: "medical", name: "Hospitals & Medical" },
+  { id: "government", name: "Government Buildings" },
+  { id: "construction", name: "Post-Construction Cleaning" },
+  { id: "industrial", name: "Industrial & Warehouse" },
+  { id: "moveinout", name: "Move-In / Move-Out Cleaning" },
 ];
 
 interface QuoteModalProps {
@@ -157,7 +157,7 @@ Please contact me with a quote. Thank you!`;
                     <div
                       key={service.id}
                       onClick={() => handleServiceToggle(service.id)}
-                      className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                      className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
                         selectedServices.includes(service.id)
                           ? "border-accent bg-accent/10"
                           : "border-border hover:border-accent/50"
@@ -172,9 +172,6 @@ Please contact me with a quote. Thank you!`;
                           {service.name}
                         </span>
                       </div>
-                      <span className="text-sm text-accent font-semibold">
-                        {service.price}
-                      </span>
                     </div>
                   ))}
 
