@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, CheckCircle, Send } from "lucide-react";
+import { X, CheckCircle, Send, Upload, Image, Mail, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const services = [
   { id: "office", name: "Office Cleaning" },
@@ -27,8 +30,12 @@ interface QuoteModalProps {
 
 export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [preferredContact, setPreferredContact] = useState<"whatsapp" | "email">("whatsapp");
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -55,7 +62,50 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const newFiles = Array.from(files).slice(0, 5 - uploadedImages.length);
+    
+    newFiles.forEach((file) => {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Each image must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreviews((prev) => [...prev, event.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+      setUploadedImages((prev) => [...prev, file]);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const convertImagesToBase64 = async (): Promise<string[]> => {
+    const base64Images: string[] = [];
+    for (const file of uploadedImages) {
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      base64Images.push(base64);
+    }
+    return base64Images;
+  };
+
+  const handleSubmit = async () => {
     if (!formData.name.trim() || !formData.phone.trim()) {
       toast({
         title: "Missing Information",
@@ -65,40 +115,63 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
       return;
     }
 
+    if (preferredContact === "email" && !formData.email.trim()) {
+      toast({
+        title: "Email Required",
+        description: "Please provide your email address for email contact.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Build WhatsApp message
     const selectedServiceNames = services
       .filter((s) => selectedServices.includes(s.id))
-      .map((s) => s.name)
-      .join(", ");
+      .map((s) => s.name);
 
-    const message = `Hi Zibeon Cleaning Services!
+    try {
+      // Convert images to base64
+      const base64Images = await convertImagesToBase64();
 
-I'd like to request a quote.
+      // Send email via edge function
+      const { data, error } = await supabase.functions.invoke("send-quote-email", {
+        body: {
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          location: formData.location,
+          message: formData.message,
+          services: selectedServiceNames,
+          preferredContact,
+          images: base64Images,
+        },
+      });
 
-*Name:* ${formData.name}
-*Phone:* ${formData.phone}
-${formData.email ? `*Email:* ${formData.email}` : ""}
-*Location:* ${formData.location || "Not specified"}
+      if (error) {
+        throw error;
+      }
 
-*Services Needed:*
-${selectedServiceNames || "General inquiry"}
-
-${formData.message ? `*Additional Details:*\n${formData.message}` : ""}
-
-Please contact me with a quote. Thank you!`;
-
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/2767149373?text=${encodedMessage}`, "_blank");
-
-    setIsSubmitting(false);
-    setStep(3);
+      console.log("Quote email sent successfully:", data);
+      setStep(3);
+    } catch (error: any) {
+      console.error("Error sending quote:", error);
+      toast({
+        title: "Error Sending Quote",
+        description: "There was a problem sending your quote request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
     setStep(1);
     setSelectedServices([]);
+    setUploadedImages([]);
+    setImagePreviews([]);
+    setPreferredContact("whatsapp");
     setFormData({
       name: "",
       phone: "",
@@ -150,30 +223,83 @@ Please contact me with a quote. Thank you!`;
 
             {/* Content */}
             <div className="p-6">
-              {/* Step 1: Service Selection */}
+              {/* Step 1: Service Selection & Image Upload */}
               {step === 1 && (
-                <div className="space-y-3">
-                  {services.map((service) => (
-                    <div
-                      key={service.id}
-                      onClick={() => handleServiceToggle(service.id)}
-                      className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                        selectedServices.includes(service.id)
-                          ? "border-accent bg-accent/10"
-                          : "border-border hover:border-accent/50"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Checkbox
-                          checked={selectedServices.includes(service.id)}
-                          onCheckedChange={() => handleServiceToggle(service.id)}
-                        />
-                        <span className="font-medium text-foreground">
-                          {service.name}
-                        </span>
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    {services.map((service) => (
+                      <div
+                        key={service.id}
+                        onClick={() => handleServiceToggle(service.id)}
+                        className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          selectedServices.includes(service.id)
+                            ? "border-accent bg-accent/10"
+                            : "border-border hover:border-accent/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            checked={selectedServices.includes(service.id)}
+                            onCheckedChange={() => handleServiceToggle(service.id)}
+                          />
+                          <span className="font-medium text-foreground">
+                            {service.name}
+                          </span>
+                        </div>
                       </div>
+                    ))}
+                  </div>
+
+                  {/* Image Upload Section */}
+                  <div className="border-t border-border pt-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Image className="w-5 h-5 text-accent" />
+                      <h3 className="font-semibold text-foreground">Upload Photos (Optional)</h3>
                     </div>
-                  ))}
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Share photos of the area that needs cleaning to help us provide an accurate quote.
+                    </p>
+                    
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                    
+                    <div className="flex flex-wrap gap-3">
+                      {imagePreviews.map((preview, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={preview}
+                            alt={`Upload ${index + 1}`}
+                            className="w-20 h-20 object-cover rounded-lg border border-border"
+                          />
+                          <button
+                            onClick={() => removeImage(index)}
+                            className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                      
+                      {uploadedImages.length < 5 && (
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="w-20 h-20 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center gap-1 hover:border-accent/50 transition-colors"
+                        >
+                          <Upload className="w-5 h-5 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">Add</span>
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Max 5 photos, 5MB each
+                    </p>
+                  </div>
 
                   <Button
                     onClick={() => setStep(2)}
@@ -216,7 +342,7 @@ Please contact me with a quote. Thank you!`;
 
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Email (optional)
+                      Email {preferredContact === "email" ? "*" : "(optional)"}
                     </label>
                     <Input
                       name="email"
@@ -254,6 +380,33 @@ Please contact me with a quote. Thank you!`;
                     />
                   </div>
 
+                  {/* Communication Preference */}
+                  <div className="border-t border-border pt-4">
+                    <label className="block text-sm font-medium text-foreground mb-3">
+                      Preferred Contact Method *
+                    </label>
+                    <RadioGroup
+                      value={preferredContact}
+                      onValueChange={(value) => setPreferredContact(value as "whatsapp" | "email")}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="whatsapp" id="whatsapp" />
+                        <Label htmlFor="whatsapp" className="flex items-center gap-2 cursor-pointer">
+                          <MessageCircle className="w-4 h-4 text-green-500" />
+                          WhatsApp
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="email" id="email" />
+                        <Label htmlFor="email" className="flex items-center gap-2 cursor-pointer">
+                          <Mail className="w-4 h-4 text-blue-500" />
+                          Email
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
                   <div className="flex gap-3 mt-6">
                     <Button
                       onClick={() => setStep(1)}
@@ -270,7 +423,7 @@ Please contact me with a quote. Thank you!`;
                       size="lg"
                     >
                       <Send className="w-4 h-4 mr-2" />
-                      Send via WhatsApp
+                      {isSubmitting ? "Sending..." : "Submit Quote Request"}
                     </Button>
                   </div>
                 </div>
@@ -286,7 +439,7 @@ Please contact me with a quote. Thank you!`;
                     Quote Request Sent!
                   </h3>
                   <p className="text-muted-foreground mb-6">
-                    Thank you for your interest. We'll review your request and get back to you shortly with a customized quote.
+                    Thank you for your interest. We'll review your request and contact you via {preferredContact === "whatsapp" ? "WhatsApp" : "email"} shortly with a customized quote.
                   </p>
                   <Button
                     onClick={resetForm}
