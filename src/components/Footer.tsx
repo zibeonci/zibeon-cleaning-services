@@ -1,4 +1,5 @@
 import { Mail, MessageCircle, Phone } from "lucide-react";
+import zibeonLogo from "@/assets/zibeon-logo.png";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -8,7 +9,7 @@ export const Footer = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4">Zibeon Cleaning Services</h3>
+            <img src={zibeonLogo} alt="Zibeon Cleaning Services" className="h-16 w-auto mb-4 brightness-0 invert" />
             <p className="text-primary-foreground/80">
               Delivering excellence in cleaning services across all sectors. Your trusted partner for spotless spaces.
             </p>
