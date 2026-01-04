@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Mail, MessageCircle, Phone } from "lucide-react";
+import { openWhatsAppChat } from "@/lib/whatsapp";
 
 export const Contact = () => {
   const handleWhatsAppClick = () => {
-    window.open("https://wa.me/2767149373", "_blank");
+    openWhatsAppChat({ phone: "27767149376" });
   };
 
   const handleEmailClick = () => {

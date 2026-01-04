@@ -1,9 +1,10 @@
 import { MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { openWhatsAppChat } from "@/lib/whatsapp";
 
 export const WhatsAppButton = () => {
   const handleClick = () => {
-    window.open("https://wa.me/27767149376", "_blank");
+    openWhatsAppChat({ phone: "27767149376" });
   };
 
   return (
