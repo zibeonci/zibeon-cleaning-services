@@ -1,12 +1,10 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, CheckCircle, Send, Upload, Image, Mail, MessageCircle } from "lucide-react";
+import { X, CheckCircle, Send, Mail, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -30,12 +28,9 @@ interface QuoteModalProps {
 
 export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [preferredContact, setPreferredContact] = useState<"whatsapp" | "email">("whatsapp");
+  const [sendMethod, setSendMethod] = useState<"whatsapp" | "email" | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -62,50 +57,72 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
     }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+  const getSelectedServiceNames = () => {
+    return services
+      .filter((s) => selectedServices.includes(s.id))
+      .map((s) => s.name);
+  };
 
-    const newFiles = Array.from(files).slice(0, 5 - uploadedImages.length);
+  const handleWhatsAppSend = () => {
+    const serviceNames = getSelectedServiceNames();
+    const servicesText = serviceNames.length > 0 
+      ? serviceNames.join(", ") 
+      : "General inquiry";
     
-    newFiles.forEach((file) => {
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Each image must be less than 5MB",
-          variant: "destructive",
-        });
-        return;
+    const message = `*New Quote Request*
+
+*Name:* ${formData.name}
+*Phone:* ${formData.phone}
+*Email:* ${formData.email || "Not provided"}
+*Location:* ${formData.location || "Not specified"}
+
+*Services Needed:*
+${servicesText}
+
+*Additional Details:*
+${formData.message || "None"}`;
+
+    const whatsappNumber = "27836780978";
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, "_blank");
+    setStep(3);
+  };
+
+  const handleEmailSend = async () => {
+    setIsSubmitting(true);
+    
+    const serviceNames = getSelectedServiceNames();
+
+    try {
+      const { error } = await supabase.functions.invoke("send-quote-email", {
+        body: {
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          location: formData.location,
+          message: formData.message,
+          services: serviceNames.length > 0 ? serviceNames : ["General inquiry"],
+        },
+      });
+
+      if (error) {
+        throw error;
       }
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImagePreviews((prev) => [...prev, event.target?.result as string]);
-      };
-      reader.readAsDataURL(file);
-      setUploadedImages((prev) => [...prev, file]);
-    });
-  };
-
-  const removeImage = (index: number) => {
-    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const convertImagesToBase64 = async (): Promise<string[]> => {
-    const base64Images: string[] = [];
-    for (const file of uploadedImages) {
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
+      setStep(3);
+    } catch (error: any) {
+      console.error("Error sending email:", error);
+      toast({
+        title: "Error Sending Email",
+        description: "There was a problem sending your request. Please try WhatsApp instead.",
+        variant: "destructive",
       });
-      base64Images.push(base64);
+    } finally {
+      setIsSubmitting(false);
     }
-    return base64Images;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!formData.name.trim() || !formData.phone.trim()) {
       toast({
         title: "Missing Information",
@@ -115,57 +132,17 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
       return;
     }
 
-    if (preferredContact === "email" && !formData.email.trim()) {
-      toast({
-        title: "Email Required",
-        description: "Please provide your email address for email contact.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    const selectedServiceNames = services
-      .filter((s) => selectedServices.includes(s.id))
-      .map((s) => s.name);
-
-    try {
-      // Save quote to database
-      const { error } = await supabase.from("quotes").insert({
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email || null,
-        location: formData.location || null,
-        message: formData.message || null,
-        services: selectedServiceNames,
-        preferred_contact: preferredContact,
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      console.log("Quote saved to database successfully");
-      setStep(3);
-    } catch (error: any) {
-      console.error("Error sending quote:", error);
-      toast({
-        title: "Error Sending Quote",
-        description: "There was a problem sending your quote request. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+    if (sendMethod === "whatsapp") {
+      handleWhatsAppSend();
+    } else if (sendMethod === "email") {
+      handleEmailSend();
     }
   };
 
   const resetForm = () => {
     setStep(1);
     setSelectedServices([]);
-    setUploadedImages([]);
-    setImagePreviews([]);
-    setPreferredContact("whatsapp");
+    setSendMethod(null);
     setFormData({
       name: "",
       phone: "",
@@ -244,57 +221,6 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
                     ))}
                   </div>
 
-                  {/* Image Upload Section */}
-                  <div className="border-t border-border pt-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Image className="w-5 h-5 text-accent" />
-                      <h3 className="font-semibold text-foreground">Upload Photos (Optional)</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Share photos of the area that needs cleaning to help us provide an accurate quote.
-                    </p>
-                    
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                      onChange={handleImageUpload}
-                    />
-                    
-                    <div className="flex flex-wrap gap-3">
-                      {imagePreviews.map((preview, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={preview}
-                            alt={`Upload ${index + 1}`}
-                            className="w-20 h-20 object-cover rounded-lg border border-border"
-                          />
-                          <button
-                            onClick={() => removeImage(index)}
-                            className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
-                      
-                      {uploadedImages.length < 5 && (
-                        <button
-                          onClick={() => fileInputRef.current?.click()}
-                          className="w-20 h-20 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center gap-1 hover:border-accent/50 transition-colors"
-                        >
-                          <Upload className="w-5 h-5 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">Add</span>
-                        </button>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Max 5 photos, 5MB each
-                    </p>
-                  </div>
-
                   <Button
                     onClick={() => setStep(2)}
                     className="w-full mt-6 bg-accent hover:bg-accent/90 text-accent-foreground"
@@ -336,7 +262,7 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
 
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Email {preferredContact === "email" ? "*" : "(optional)"}
+                      Email (optional)
                     </label>
                     <Input
                       name="email"
@@ -374,31 +300,37 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
                     />
                   </div>
 
-                  {/* Communication Preference */}
+                  {/* Send Method Selection */}
                   <div className="border-t border-border pt-4">
                     <label className="block text-sm font-medium text-foreground mb-3">
-                      Preferred Contact Method *
+                      How would you like to send your request?
                     </label>
-                    <RadioGroup
-                      value={preferredContact}
-                      onValueChange={(value) => setPreferredContact(value as "whatsapp" | "email")}
-                      className="flex gap-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="whatsapp" id="whatsapp" />
-                        <Label htmlFor="whatsapp" className="flex items-center gap-2 cursor-pointer">
-                          <MessageCircle className="w-4 h-4 text-green-500" />
-                          WhatsApp
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="email" id="email" />
-                        <Label htmlFor="email" className="flex items-center gap-2 cursor-pointer">
-                          <Mail className="w-4 h-4 text-blue-500" />
-                          Email
-                        </Label>
-                      </div>
-                    </RadioGroup>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => setSendMethod("whatsapp")}
+                        className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                          sendMethod === "whatsapp"
+                            ? "border-green-500 bg-green-500/10"
+                            : "border-border hover:border-green-500/50"
+                        }`}
+                      >
+                        <MessageCircle className="w-8 h-8 text-green-500" />
+                        <span className="font-medium text-foreground">WhatsApp</span>
+                        <span className="text-xs text-muted-foreground">Instant chat</span>
+                      </button>
+                      <button
+                        onClick={() => setSendMethod("email")}
+                        className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${
+                          sendMethod === "email"
+                            ? "border-blue-500 bg-blue-500/10"
+                            : "border-border hover:border-blue-500/50"
+                        }`}
+                      >
+                        <Mail className="w-8 h-8 text-blue-500" />
+                        <span className="font-medium text-foreground">Email</span>
+                        <span className="text-xs text-muted-foreground">We'll respond soon</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex gap-3 mt-6">
@@ -412,12 +344,13 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
                     </Button>
                     <Button
                       onClick={handleSubmit}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !sendMethod}
                       className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground"
                       size="lg"
                     >
-                      <Send className="w-4 h-4 mr-2" />
-                      {isSubmitting ? "Sending..." : "Submit Quote Request"}
+                      {sendMethod === "whatsapp" && <MessageCircle className="w-4 h-4 mr-2" />}
+                      {sendMethod === "email" && <Mail className="w-4 h-4 mr-2" />}
+                      {isSubmitting ? "Sending..." : sendMethod === "whatsapp" ? "Open WhatsApp" : sendMethod === "email" ? "Send Email" : "Select Method"}
                     </Button>
                   </div>
                 </div>
@@ -430,10 +363,12 @@ export const QuoteModal = ({ isOpen, onClose }: QuoteModalProps) => {
                     <CheckCircle className="w-10 h-10 text-accent" />
                   </div>
                   <h3 className="text-2xl font-bold text-foreground mb-3">
-                    Quote Request Sent!
+                    {sendMethod === "whatsapp" ? "WhatsApp Opened!" : "Quote Request Sent!"}
                   </h3>
                   <p className="text-muted-foreground mb-6">
-                    Thank you for your interest. We'll review your request and contact you via {preferredContact === "whatsapp" ? "WhatsApp" : "email"} shortly with a customized quote.
+                    {sendMethod === "whatsapp" 
+                      ? "Please send the message in WhatsApp to complete your request. We'll respond as soon as possible!"
+                      : "Thank you for your interest. We've received your request and will get back to you shortly with a customized quote."}
                   </p>
                   <Button
                     onClick={resetForm}
