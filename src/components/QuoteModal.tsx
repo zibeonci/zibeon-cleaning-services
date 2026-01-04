@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { openWhatsAppChat } from "@/lib/whatsapp";
 
 const services = [
   { id: "office", name: "Office Cleaning" },
@@ -83,8 +84,7 @@ ${servicesText}
 ${formData.message || "None"}`;
 
     const whatsappNumber = "27767149376";
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, "_blank");
+    openWhatsAppChat({ phone: whatsappNumber, text: message });
     setStep(3);
   };
 
