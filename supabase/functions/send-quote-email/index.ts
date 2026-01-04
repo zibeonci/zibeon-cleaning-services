@@ -16,8 +16,6 @@ interface QuoteEmailRequest {
   location: string;
   message: string;
   services: string[];
-  preferredContact: "whatsapp" | "email";
-  images?: string[]; // Base64 encoded images
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -36,24 +34,12 @@ const handler = async (req: Request): Promise<Response> => {
       email: requestData.email,
       location: requestData.location,
       services: requestData.services,
-      preferredContact: requestData.preferredContact,
-      imageCount: requestData.images?.length || 0,
     });
 
     // Build email content
     const servicesHtml = requestData.services.length > 0
       ? requestData.services.map(s => `<li>${s}</li>`).join("")
       : "<li>General inquiry</li>";
-
-    // Prepare attachments from base64 images
-    const attachments = requestData.images?.map((base64, index) => {
-      // Remove data URL prefix if present
-      const base64Data = base64.replace(/^data:image\/\w+;base64,/, "");
-      return {
-        filename: `cleaning-area-${index + 1}.jpg`,
-        content: base64Data,
-      };
-    }) || [];
 
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -67,7 +53,6 @@ const handler = async (req: Request): Promise<Response> => {
           <p><strong>Phone:</strong> ${requestData.phone}</p>
           <p><strong>Email:</strong> ${requestData.email || "Not provided"}</p>
           <p><strong>Location:</strong> ${requestData.location || "Not specified"}</p>
-          <p><strong>Preferred Contact Method:</strong> ${requestData.preferredContact === "whatsapp" ? "WhatsApp" : "Email"}</p>
         </div>
         
         <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -84,13 +69,6 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
         ` : ""}
         
-        ${attachments.length > 0 ? `
-          <div style="background-color: #d1fae5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h2 style="color: #065f46; margin-top: 0;">📷 ${attachments.length} Photo(s) Attached</h2>
-            <p style="margin: 0;">The customer has uploaded photos of the area to be cleaned.</p>
-          </div>
-        ` : ""}
-        
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
         <p style="color: #6b7280; font-size: 12px;">
           This quote request was submitted via the Zibeon Cleaning Services website.
@@ -98,14 +76,14 @@ const handler = async (req: Request): Promise<Response> => {
       </div>
     `;
 
-    console.log("Sending email to admin@zibeoncs.co.za");
+    // Send to Gmail address (no domain verification needed)
+    console.log("Sending email to zibeonricardo@gmail.com");
 
     const emailResponse = await resend.emails.send({
       from: "Zibeon Cleaning Services <onboarding@resend.dev>",
-      to: ["admin@zibeoncs.co.za"],
+      to: ["zibeonricardo@gmail.com"],
       subject: `New Quote Request from ${requestData.name}`,
       html: emailHtml,
-      attachments: attachments.length > 0 ? attachments : undefined,
     });
 
     console.log("Email sent successfully:", emailResponse);
