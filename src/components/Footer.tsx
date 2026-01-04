@@ -39,13 +39,13 @@ export const Footer = () => {
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 <a href="mailto:zibeonricardo@gmail.com" className="hover:text-accent transition-colors">
-                  zibeonricardo@gmail.com
+                  admin@zibeoncs.co.za
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4" />
                 <a 
-                  href="https://web.whatsapp.com/send?phone=27767149376" 
+                  href="https://web.whatsapp.com/send?phone=+27767149376" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="hover:text-accent transition-colors"

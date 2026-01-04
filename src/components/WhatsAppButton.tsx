@@ -4,7 +4,7 @@ import { openWhatsAppChat } from "@/lib/whatsapp";
 
 export const WhatsAppButton = () => {
   const handleClick = () => {
-    openWhatsAppChat({ phone: "27767149376" });
+    openWhatsAppChat({ phone: "+27767149376" });
   };
 
   return (

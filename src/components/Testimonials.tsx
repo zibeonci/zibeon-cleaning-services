@@ -46,14 +46,14 @@ const testimonials = [
   },
   {
     name: "Lisa Thompson",
-    location: "Sea Point",
+    location: "Lagoon Hotel",
     type: "Airbnb",
     rating: 5,
     review: "Managing holiday rentals requires reliable cleaners. Zibeon never lets me down - even with last-minute bookings. Five stars all the way!",
   },
   {
     name: "Pieter Joubert",
-    location: "Century City",
+    location: "Malmesbury",
     type: "Residential",
     rating: 5,
     review: "The team is friendly, efficient, and always goes the extra mile. My home feels fresh and welcoming after every visit. Couldn't ask for better service.",
@@ -121,9 +121,6 @@ export const Testimonials = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-center mt-12"
         >
-          <p className="text-lg text-muted-foreground">
-            Serving <span className="text-accent font-semibold">Sea Point</span>, <span className="text-accent font-semibold">V&A Waterfront</span>, <span className="text-accent font-semibold">Tableview</span>, <span className="text-accent font-semibold">Milnerton</span>, <span className="text-accent font-semibold">Century City</span>, <span className="text-accent font-semibold">Cape Town CBD</span> and surrounding areas
-          </p>
         </motion.div>
       </div>
     </section>
