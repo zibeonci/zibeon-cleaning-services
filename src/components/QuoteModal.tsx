@@ -82,7 +82,7 @@ ${servicesText}
 *Additional Details:*
 ${formData.message || "None"}`;
 
-    const whatsappNumber = "27836780978";
+    const whatsappNumber = "27767149376";
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, "_blank");
     setStep(3);
