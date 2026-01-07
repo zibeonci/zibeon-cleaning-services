@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import zibeonLogo from "@/assets/zibeon-logo.png";
 
 const navLinks = [
   { name: "Services", href: "#services" },
@@ -42,17 +41,19 @@ export const Navbar = ({ onGetQuote }: NavbarProps) => {
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-24">
-          {/* Logo */}
+        <div className="flex items-center justify-between h-16">
+          {/* Logo Text */}
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex items-center"
+            className={`text-xl font-bold transition-colors ${
+              isScrolled ? "text-foreground" : "text-primary-foreground"
+            }`}
           >
-            <img src={zibeonLogo} alt="Zibeon Cleaning Services" className="h-24 w-auto" />
+            Zibeon Cleaning Services
           </a>
 
           {/* Desktop Navigation */}
