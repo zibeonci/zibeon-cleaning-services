@@ -53,11 +53,11 @@ export const Navbar = ({ onGetQuote }: NavbarProps) => {
           >
             <div className="relative">
               <Sparkles 
-                className={`w-8 h-8 transition-all duration-300 group-hover:scale-110 ${
+                className={`w-8 h-8 animate-sparkle ${
                   isScrolled ? "text-accent" : "text-accent"
                 }`} 
               />
-              <div className="absolute inset-0 bg-accent/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-accent/30 blur-lg rounded-full animate-glow-pulse" />
             </div>
             <div className="text-xl font-bold tracking-tight">
               <span className={`bg-gradient-to-r ${
