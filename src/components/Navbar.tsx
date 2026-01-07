@@ -49,11 +49,11 @@ export const Navbar = ({ onGetQuote }: NavbarProps) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className={`text-xl font-bold transition-colors ${
-              isScrolled ? "text-foreground" : "text-primary-foreground"
-            }`}
+            className="text-xl font-bold"
           >
-            Zibeon Cleaning Services
+            <span className={`${isScrolled ? "text-primary" : "text-primary-foreground"}`}>Zibeon</span>
+            <span className="text-accent"> Cleaning</span>
+            <span className={`${isScrolled ? "text-primary" : "text-primary-foreground"}`}> Services</span>
           </a>
 
           {/* Desktop Navigation */}
