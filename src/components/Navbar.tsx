@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -49,11 +49,29 @@ export const Navbar = ({ onGetQuote }: NavbarProps) => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="text-xl font-bold"
+            className="flex items-center gap-2 group"
           >
-            <span className={`${isScrolled ? "text-primary" : "text-primary-foreground"}`}>Zibeon</span>
-            <span className="text-accent"> Cleaning</span>
-            <span className={`${isScrolled ? "text-primary" : "text-primary-foreground"}`}> Services</span>
+            <div className="relative">
+              <Sparkles 
+                className={`w-8 h-8 transition-all duration-300 group-hover:scale-110 ${
+                  isScrolled ? "text-accent" : "text-accent"
+                }`} 
+              />
+              <div className="absolute inset-0 bg-accent/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div className="text-xl font-bold tracking-tight">
+              <span className={`bg-gradient-to-r ${
+                isScrolled 
+                  ? "from-primary via-accent to-primary" 
+                  : "from-primary-foreground via-accent to-primary-foreground"
+              } bg-clip-text text-transparent`}>
+                Zibeon
+              </span>
+              <span className="text-accent font-extrabold"> Cleaning </span>
+              <span className={`${isScrolled ? "text-primary" : "text-primary-foreground"}`}>
+                Services
+              </span>
+            </div>
           </a>
 
           {/* Desktop Navigation */}
