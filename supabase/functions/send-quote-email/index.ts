@@ -18,6 +18,17 @@ interface QuoteEmailRequest {
   services: string[];
 }
 
+// HTML escape function to prevent XSS attacks
+function escapeHtml(unsafe: string): string {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 const handler = async (req: Request): Promise<Response> => {
   console.log("Received request to send quote email");
 
@@ -29,16 +40,14 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const requestData: QuoteEmailRequest = await req.json();
     console.log("Quote request data received:", {
-      name: requestData.name,
-      phone: requestData.phone,
-      email: requestData.email,
-      location: requestData.location,
-      services: requestData.services,
+      name: escapeHtml(requestData.name),
+      phone: escapeHtml(requestData.phone),
+      servicesCount: requestData.services?.length || 0,
     });
 
-    // Build email content
-    const servicesHtml = requestData.services.length > 0
-      ? requestData.services.map(s => `<li>${s}</li>`).join("")
+    // Build email content with escaped user inputs
+    const servicesHtml = requestData.services?.length > 0
+      ? requestData.services.map(s => `<li>${escapeHtml(s)}</li>`).join("")
       : "<li>General inquiry</li>";
 
     const emailHtml = `
@@ -49,10 +58,10 @@ const handler = async (req: Request): Promise<Response> => {
         
         <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h2 style="color: #374151; margin-top: 0;">Customer Details</h2>
-          <p><strong>Name:</strong> ${requestData.name}</p>
-          <p><strong>Phone:</strong> ${requestData.phone}</p>
-          <p><strong>Email:</strong> ${requestData.email || "Not provided"}</p>
-          <p><strong>Location:</strong> ${requestData.location || "Not specified"}</p>
+          <p><strong>Name:</strong> ${escapeHtml(requestData.name)}</p>
+          <p><strong>Phone:</strong> ${escapeHtml(requestData.phone)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(requestData.email || "Not provided")}</p>
+          <p><strong>Location:</strong> ${escapeHtml(requestData.location || "Not specified")}</p>
         </div>
         
         <div style="background-color: #dbeafe; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -65,7 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
         ${requestData.message ? `
           <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h2 style="color: #92400e; margin-top: 0;">Additional Details</h2>
-            <p style="margin: 0;">${requestData.message}</p>
+            <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(requestData.message)}</p>
           </div>
         ` : ""}
         
@@ -82,11 +91,11 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Zibeon Cleaning Services <onboarding@resend.dev>",
       to: ["zibeonricardo@gmail.com"],
-      subject: `New Quote Request from ${requestData.name}`,
+      subject: `New Quote Request from ${escapeHtml(requestData.name)}`,
       html: emailHtml,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("Email sent successfully");
 
     return new Response(JSON.stringify({ success: true, data: emailResponse }), {
       status: 200,
@@ -98,7 +107,7 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in send-quote-email function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Failed to send email" }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
