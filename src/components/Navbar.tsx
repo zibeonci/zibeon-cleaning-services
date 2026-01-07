@@ -42,7 +42,7 @@ export const Navbar = ({ onGetQuote }: NavbarProps) => {
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-24">
           {/* Logo */}
           <a
             href="#"
@@ -52,7 +52,7 @@ export const Navbar = ({ onGetQuote }: NavbarProps) => {
             }}
             className="flex items-center"
           >
-            <img src={zibeonLogo} alt="Zibeon Cleaning Services" className="h-20 w-auto" />
+            <img src={zibeonLogo} alt="Zibeon Cleaning Services" className="h-24 w-auto" />
           </a>
 
           {/* Desktop Navigation */}
