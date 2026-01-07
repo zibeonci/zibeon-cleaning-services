@@ -78,10 +78,32 @@ export default {
             height: "0",
           },
         },
+        "sparkle": {
+          "0%, 100%": {
+            transform: "scale(1) rotate(0deg)",
+            opacity: "1",
+          },
+          "50%": {
+            transform: "scale(1.1) rotate(5deg)",
+            opacity: "0.8",
+          },
+        },
+        "glow-pulse": {
+          "0%, 100%": {
+            opacity: "0.4",
+            transform: "scale(1)",
+          },
+          "50%": {
+            opacity: "0.8",
+            transform: "scale(1.2)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "sparkle": "sparkle 2s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
       },
     },
   },
