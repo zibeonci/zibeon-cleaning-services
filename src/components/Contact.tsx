@@ -3,14 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Mail, MessageCircle, Phone } from "lucide-react";
 import { openWhatsAppChat } from "@/lib/whatsapp";
 
-export const Contact = () => {
+interface ContactProps {
+  onGetQuote: () => void;
+}
+
+export const Contact = ({ onGetQuote }: ContactProps) => {
   const handleWhatsAppClick = () => {
     openWhatsAppChat({ phone: "+27767149376" });
   };
-
-  const emailHref = `mailto:admin@zibeoncs.co.za?subject=${encodeURIComponent(
-    "Quote Request - Zibeon Cleaning Services"
-  )}`;
 
   return (
     <section id="contact" className="py-24 bg-gradient-hero relative overflow-hidden">
@@ -58,12 +58,12 @@ export const Contact = () => {
               <Mail className="w-12 h-12 text-accent mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-primary-foreground mb-2">Email</h3>
               <p className="text-primary-foreground/80 mb-4">Send us a message</p>
-              <a 
-                href={emailHref}
-                className="inline-flex items-center justify-center w-full h-10 px-4 py-2 rounded-md bg-accent hover:bg-accent/90 text-accent-foreground font-medium transition-colors"
+              <Button 
+                onClick={onGetQuote}
+                className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
               >
                 Email Us
-              </a>
+              </Button>
             </motion.div>
           </div>
 

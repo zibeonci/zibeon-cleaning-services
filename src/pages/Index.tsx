@@ -19,7 +19,7 @@ const Index = () => {
       <Services />
       <WhyChooseUs />
       <Testimonials />
-      <Contact />
+      <Contact onGetQuote={() => setIsQuoteModalOpen(true)} />
       <Footer />
       <WhatsAppButton />
       <QuoteModal isOpen={isQuoteModalOpen} onClose={() => setIsQuoteModalOpen(false)} />
