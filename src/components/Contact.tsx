@@ -58,9 +58,12 @@ export const Contact = () => {
               <Mail className="w-12 h-12 text-accent mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-primary-foreground mb-2">Email</h3>
               <p className="text-primary-foreground/80 mb-4">Send us a message</p>
-              <Button asChild className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-                <a href={emailHref}>Email Us</a>
-              </Button>
+              <a 
+                href={emailHref}
+                className="inline-flex items-center justify-center w-full h-10 px-4 py-2 rounded-md bg-accent hover:bg-accent/90 text-accent-foreground font-medium transition-colors"
+              >
+                Email Us
+              </a>
             </motion.div>
           </div>
 
