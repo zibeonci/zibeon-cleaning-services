@@ -1,3 +1,4 @@
+# Zibeon Cleaning Services - Robots.txt
 User-agent: Googlebot
 Allow: /
 
@@ -12,3 +13,6 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Sitemap location - UPDATE WITH YOUR ACTUAL DOMAIN
+Sitemap: https://zibeoncs.co.za/sitemap.xml
