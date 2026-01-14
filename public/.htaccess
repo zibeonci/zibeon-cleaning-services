@@ -1,3 +1,11 @@
+# Set correct MIME types
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType text/css .css
+  AddType image/svg+xml .svg
+</IfModule>
+
+# SPA routing
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
