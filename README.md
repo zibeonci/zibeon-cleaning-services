@@ -62,7 +62,21 @@ This project is built with:
 
 ## How can I deploy this project?
 
+### Option A — Publish on Lovable
+
 Simply open [Lovable](https://lovable.dev/projects/f84e3c48-ce21-47ce-a892-cc9a034f6e2c) and click on Share -> Publish.
+
+### Option B — Deploy to cPanel (static hosting)
+
+This project is a static Vite site. You must upload the **build output** (`dist/`) — not the repo root (otherwise the server tries to load `/src/main.tsx` and you’ll see the MIME-type error).
+
+Recommended workflow (no local build needed):
+1. Push your code to GitHub.
+2. In GitHub → **Actions**, run the workflow **“Build dist (cPanel)”** and download the `dist` artifact.
+3. Upload the **contents** of that `dist/` folder into `public_html/` (so `public_html/assets/...` exists).
+4. Open your site → **View Source**: you should see `/assets/...js` and **not** `/src/main.tsx`.
+
+More details: see `docs/cpanel-deploy.md`.
 
 ## Can I connect a custom domain to my Lovable project?
 
