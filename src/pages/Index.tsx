@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
+import { ClientLogos } from "@/components/ClientLogos";
 import { Services } from "@/components/Services";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { Testimonials } from "@/components/Testimonials";
@@ -16,6 +17,7 @@ const Index = () => {
     <main className="min-h-screen">
       <Navbar onGetQuote={() => setIsQuoteModalOpen(true)} />
       <Hero onGetQuote={() => setIsQuoteModalOpen(true)} />
+      <ClientLogos />
       <Services />
       <WhyChooseUs />
       <Testimonials />
