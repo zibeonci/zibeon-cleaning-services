@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { ClientLogos } from "@/components/ClientLogos";
 import { Services } from "@/components/Services";
+import { BeforeAfterGallery } from "@/components/BeforeAfterGallery";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { Testimonials } from "@/components/Testimonials";
 import { Contact } from "@/components/Contact";
@@ -19,6 +20,7 @@ const Index = () => {
       <Hero onGetQuote={() => setIsQuoteModalOpen(true)} />
       <ClientLogos />
       <Services />
+      <BeforeAfterGallery />
       <WhyChooseUs />
       <Testimonials />
       <Contact onGetQuote={() => setIsQuoteModalOpen(true)} />
