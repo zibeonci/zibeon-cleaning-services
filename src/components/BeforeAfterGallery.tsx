@@ -1,5 +1,11 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
+import beforeOffice from "@/assets/before-office.jpg";
+import afterOffice from "@/assets/after-office.jpg";
+import beforeKitchen from "@/assets/before-kitchen.jpg";
+import afterKitchen from "@/assets/after-kitchen.jpg";
+import beforeAirbnb from "@/assets/before-airbnb.jpg";
+import afterAirbnb from "@/assets/after-airbnb.jpg";
 
 interface ComparisonItem {
   id: number;
@@ -14,22 +20,22 @@ const comparisons: ComparisonItem[] = [
     id: 1,
     title: "Office Deep Clean",
     service: "Commercial Cleaning",
-    beforeImage: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=400&fit=crop&q=80",
-    afterImage: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop&q=80",
+    beforeImage: beforeOffice,
+    afterImage: afterOffice,
   },
   {
     id: 2,
     title: "Kitchen Restoration",
     service: "Residential Cleaning",
-    beforeImage: "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=600&h=400&fit=crop&q=80",
-    afterImage: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop&q=80",
+    beforeImage: beforeKitchen,
+    afterImage: afterKitchen,
   },
   {
     id: 3,
     title: "Airbnb Turnover",
     service: "Short-term Rental",
-    beforeImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop&q=80",
-    afterImage: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop&q=80",
+    beforeImage: beforeAirbnb,
+    afterImage: afterAirbnb,
   },
 ];
 
